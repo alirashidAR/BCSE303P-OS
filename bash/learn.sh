@@ -43,7 +43,7 @@
 
 
 # echo $(( 5 + 10 ))
-# ls -l | grep "\.c"
+# ls -l | LS "\.c"
 
 # contens = $(cat readerWriter.c)
 
