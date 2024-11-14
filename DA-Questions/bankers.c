@@ -54,7 +54,7 @@ bool isSafe(){
             {   
                 for(int j=0;j<num_resources;j++)
                 {
-                    work[i] += allocation[i][j];
+                    work[j] += allocation[i][j];
                 }
                 safe_seq[count++]=i;
                 finish[i] = true;

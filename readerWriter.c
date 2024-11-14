@@ -22,7 +22,7 @@ void *reader(void *arg)
         }
         sem_post(&mutex);
 
-        printf("Reader %d: Read data = %id\n",id,data);
+        printf("Reader %d: Read data = %d\n",id,data);
         sleep(1);
 
         //exit
