@@ -19,21 +19,17 @@ public:
     }
 };
 
-
 bool compareArrivalTime(Process p1, Process p2) {
     return p1.arrival_time < p2.arrival_time;
 }
-
 
 bool compareCpuTime(Process p1, Process p2) {
     return p1.cpu_time < p2.cpu_time;
 }
 
-
 bool comparePriority(Process p1, Process p2) {
     return p1.priority < p2.priority;
 }
-
 
 void calculateAvgTimes(vector<Process> &processes) {
     int total_waiting_time = 0;
@@ -47,7 +43,6 @@ void calculateAvgTimes(vector<Process> &processes) {
     cout << "Average Waiting Time: " << avg_waiting_time << endl;
     cout << "Average Turnaround Time: " << avg_turnaround_time << endl;
 }
-
 
 void fcfs(vector<Process> &processes) {
     sort(processes.begin(), processes.end(), compareArrivalTime);
@@ -63,7 +58,6 @@ void fcfs(vector<Process> &processes) {
     cout << "FCFS Scheduling:" << endl;
     calculateAvgTimes(processes);
 }
-
 
 void preemptiveSJF(vector<Process> &processes) {
     int current_time = 0;
@@ -97,7 +91,6 @@ void preemptiveSJF(vector<Process> &processes) {
     calculateAvgTimes(processes);
 }
 
-
 void nonPreemptiveSJF(vector<Process> &processes) {
     sort(processes.begin(), processes.end(), compareArrivalTime);
     int current_time = 0;
@@ -125,7 +118,6 @@ void nonPreemptiveSJF(vector<Process> &processes) {
     cout << "Non-Preemptive SJF Scheduling:" << endl;
     calculateAvgTimes(processes);
 }
-
 
 void priorityScheduling(vector<Process> &processes) {
     sort(processes.begin(), processes.end(), compareArrivalTime);
@@ -155,6 +147,37 @@ void priorityScheduling(vector<Process> &processes) {
     calculateAvgTimes(processes);
 }
 
+void preemptivePriorityScheduling(vector<Process> &processes) {
+    int current_time = 0;
+    int completed = 0;
+    int n = processes.size();
+    int highest_priority = -1;
+    bool found = false;
+    while (completed != n) {
+        for (int i = 0; i < n; i++) {
+            if (processes[i].arrival_time <= current_time && processes[i].remaining_time > 0) {
+                if (!found || processes[i].priority < processes[highest_priority].priority) {
+                    highest_priority = i;
+                    found = true;
+                }
+            }
+        }
+        if (!found) {
+            current_time++;
+            continue;
+        }
+        processes[highest_priority].remaining_time--;
+        current_time++;
+        if (processes[highest_priority].remaining_time == 0) {
+            completed++;
+            found = false;
+            processes[highest_priority].turnaround_time = current_time - processes[highest_priority].arrival_time;
+            processes[highest_priority].waiting_time = processes[highest_priority].turnaround_time - processes[highest_priority].cpu_time;
+        }
+    }
+    cout << "Preemptive Priority Scheduling:" << endl;
+    calculateAvgTimes(processes);
+}
 
 void roundRobin(vector<Process> &processes, int time_slice) {
     int current_time = 0;
@@ -198,17 +221,16 @@ void roundRobin(vector<Process> &processes, int time_slice) {
     calculateAvgTimes(processes);
 }
 
-
 void displayMenu() {
     cout << "CPU Scheduling Algorithms" << endl;
     cout << "1. FCFS" << endl;
     cout << "2. Preemptive SJF" << endl;
     cout << "3. Non-Preemptive SJF" << endl;
     cout << "4. Priority Scheduling" << endl;
-    cout << "5. Round Robin" << endl;
-    cout << "6. Exit" << endl;
+    cout << "5. Preemptive Priority Scheduling" << endl;
+    cout << "6. Round Robin" << endl;
+    cout << "7. Exit" << endl;
 }
-
 
 int main() {
     vector<Process> processes;
@@ -220,44 +242,46 @@ int main() {
         int arrival, burst, prio;
         cout << "Enter Arrival Time of Process " << i + 1 << ": ";
         cin >> arrival;
-        cout << "Enter Burst Time of Process " << i + 1 << ": ";
+        cout << "Enter CPU Burst Time of Process " << i + 1 << ": ";
         cin >> burst;
         cout << "Enter Priority of Process " << i + 1 << ": ";
         cin >> prio;
         processes.push_back(Process(i + 1, arrival, burst, prio));
     }
 
-    int choice;
-    int time_slice = 2;
-    do {
+    int choice, time_slice;
+    while (true) {
         displayMenu();
         cout << "Enter your choice: ";
         cin >> choice;
 
-        vector<Process> temp_processes = processes;
         switch (choice) {
             case 1:
-                fcfs(temp_processes);
+                fcfs(processes);
                 break;
             case 2:
-                preemptiveSJF(temp_processes);
+                preemptiveSJF(processes);
                 break;
             case 3:
-                nonPreemptiveSJF(temp_processes);
+                nonPreemptiveSJF(processes);
                 break;
             case 4:
-                priorityScheduling(temp_processes);
+                priorityScheduling(processes);
                 break;
             case 5:
-                roundRobin(temp_processes, time_slice);
+                preemptivePriorityScheduling(processes);
                 break;
             case 6:
-                cout << "Exiting..." << endl;
+                cout << "Enter Time Slice for Round Robin: ";
+                cin >> time_slice;
+                roundRobin(processes, time_slice);
                 break;
+            case 7:
+                cout << "Exiting..." << endl;
+                return 0;
             default:
-                cout << "Invalid choice! Please try again." << endl;
+                cout << "Invalid choice, try again." << endl;
         }
-    } while (choice != 6);
-
+    }
     return 0;
 }
