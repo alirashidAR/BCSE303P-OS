@@ -23,10 +23,10 @@ void calculateNeed(){
 }
 
 
-bool canAllocate(int process){
+bool canAllocate(int process, int work[]){
     for(int j=0;j<num_resources;j++)
     {
-        if(need[process][j]>available[j])
+        if(need[process][j]>work[j])
         {
             return false;
         }
@@ -50,7 +50,7 @@ bool isSafe(){
         bool found = false;
         for(int i=0;i<num_processes;i++)
         {
-            if(!finish[i] && canAllocate(i))
+            if(!finish[i] && canAllocate(i,work))
             {   
                 for(int j=0;j<num_resources;j++)
                 {

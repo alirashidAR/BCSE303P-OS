@@ -10,7 +10,7 @@ void round_robin(int n, int burst_time[], int quantum){
         remaining_time[i] = burst_time[i];
         waiting_time[i]=0;
     }
-    
+
     int current_time =0;
     int done;
 
